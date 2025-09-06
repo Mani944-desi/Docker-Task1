@@ -1,0 +1,150 @@
+Docker is running :
+
+ubuntu@ip-172-31-32-48:~$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+ubuntu@ip-172-31-32-48:~$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ip-172-31-32-48:~$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ip-172-31-32-48:~$ docker --version
+Docker version 28.4.0, build d8eb465
+ubuntu@ip-172-31-32-48:~$ docker -v
+Docker version 28.4.0, build d8eb465
+ubuntu@ip-172-31-32-48:~$ sudo systemctl status docker
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: enabled)
+     Active: active (running) since Sat 2025-09-06 13:14:01 UTC; 27min ago
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 7479 (dockerd)
+      Tasks: 7
+     Memory: 87.4M (peak: 96.7M)
+        CPU: 541ms
+     CGroup: /system.slice/docker.service
+             └─7479 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Sep 06 13:14:00 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:00.795855552Z" level=info msg="detected 127.0.0.53 nameserver, assuming systemd-resolve>
+Sep 06 13:14:00 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:00.996438784Z" level=info msg="Creating a containerd client" address=/run/containerd/co>
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.071106080Z" level=info msg="Loading containers: start."
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.855853450Z" level=info msg="Loading containers: done."
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.902768086Z" level=info msg="Docker daemon" commit=249d679 containerd-snapshotter=fal>
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.904480903Z" level=info msg="Initializing buildkit"
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.957395008Z" level=info msg="Completed buildkit initialization"
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.985384358Z" level=info msg="Daemon has completed initialization"
+Sep 06 13:14:01 ip-172-31-32-48 dockerd[7479]: time="2025-09-06T13:14:01.985467297Z" level=info msg="API listen on /run/docker.sock"
+Sep 06 13:14:01 ip-172-31-32-48 systemd[1]: Started docker.service - Docker Application Container Engine.
+...skipping...
+● docker.service - Docker Application Container Engine
+
+***********************************************************************************  Pull a Docker Image *********************************************************************************************************
+
+ubuntu@ip-172-31-32-48:~$ docker run -d -p 8080:80 --name my-nginx nginx
+Unable to find image 'nginx:latest' locally
+latest: Pulling from library/nginx
+b1badc6e5066: Pull complete
+a2da0c0f2353: Pull complete
+e5d9bb0b85cc: Pull complete
+14a859b5ba24: Pull complete
+716cdf61af59: Pull complete
+14e422fd20a0: Pull complete
+c3741b707ce6: Pull complete
+Digest: sha256:33e0bbc7ca9ecf108140af6288c7c9d1ecc77548cbfd3952fd8466a75edefe57
+Status: Downloaded newer image for nginx:latest
+ab5f373fbea8d415317601bcef586aa2d2a5f3c0525cd12e481908685f3803a6
+ubuntu@ip-172-31-32-48:~$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        latest    ad5708199ec7   3 weeks ago   192MB
+
+ubuntu@ip-172-31-32-48:~$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+ab5f373fbea8   nginx     "/docker-entrypoint.…"   6 minutes ago   Up 6 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-nginx
+ubuntu@ip-172-31-32-48:~$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+ab5f373fbea8   nginx     "/docker-entrypoint.…"   6 minutes ago   Up 6 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-nginx
+ubuntu@ip-172-31-32-48:~$
+
+ubuntu@ip-172-31-32-48:~$ docker stop my-nginx
+my-nginx
+ubuntu@ip-172-31-32-48:~$ docker rm my-nginx
+my-nginx
+ubuntu@ip-172-31-32-48:~$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ip-172-31-32-48:~$
+
+
+***************************************************************************************** Volume and network *******************************************************************************************************************
+
+ubuntu@ip-172-31-32-48:~$ docker volume create myvol
+myvol
+ubuntu@ip-172-31-32-48:~$ docker run -d -v myvolume:/data --name voltest nginx
+3aa668ca86017a870cff116e6125ebd41f0cb792cdb5414b709175137f2710bf
+ubuntu@ip-172-31-32-48:~$ docker volume ls
+DRIVER    VOLUME NAME
+local     myvol
+local     myvolume
+
+
+ubuntu@ip-172-31-32-48:~$ docker volume create myvol
+myvol
+ubuntu@ip-172-31-32-48:~$ docker run -d -v myvolume:/data --name voltest nginx
+3aa668ca86017a870cff116e6125ebd41f0cb792cdb5414b709175137f2710bf
+ubuntu@ip-172-31-32-48:~$ docker volume ls
+DRIVER    VOLUME NAME
+local     myvol
+local     myvolume
+ubuntu@ip-172-31-32-48:~$ ^C
+ubuntu@ip-172-31-32-48:~$ ^C
+ubuntu@ip-172-31-32-48:~$ docker network create mynetwork
+1e7d26bda5e2f6ca57cf48664a3b1bf25b494f152c9b72e3bde960142ec09521
+ubuntu@ip-172-31-32-48:~$ docker run -d --name app1 --network mynetwork nginx
+docker run -d --name app2 --network mynetwork nginx
+2529d3bf4363567a8615d05aa9a6054bc9ca62ffb6b0dd5fb1b9567eaf75450c
+de9be58ec59af169609acfef7fde718b10d82630f5f8b3dd03485cffb341b789
+ubuntu@ip-172-31-32-48:~$ docker network ls
+NETWORK ID     NAME        DRIVER    SCOPE
+9457da5775e9   bridge      bridge    local
+faf103370f88   host        host      local
+1e7d26bda5e2   mynetwork   bridge    local
+ec8b8cdebfe2   none        null      local
+ubuntu@ip-172-31-32-48:~$
+
+
+********************************************************************************************** Removing all the network and volume **********************************************************************
+
+ubuntu@ip-172-31-32-48:~$ docker rm -f $(docker ps -aq)
+de9be58ec59a
+2529d3bf4363
+3aa668ca8601
+ubuntu@ip-172-31-32-48:~$ docker rmi -f $(docker images -q)
+Untagged: nginx:latest
+Untagged: nginx@sha256:33e0bbc7ca9ecf108140af6288c7c9d1ecc77548cbfd3952fd8466a75edefe57
+Deleted: sha256:ad5708199ec7d169c6837fe46e1646603d0f7d0a0f54d3cd8d07bc1c818d0224
+Deleted: sha256:1afc33e48e9f9aa9fb610287b45b79dfab1d017eac5e2a2b4278c7ebd4dc1604
+Deleted: sha256:8fd30f3584c9566285c852bf3151e0309103a2cb2c69679c957085b4ca04c1bf
+Deleted: sha256:19a317257fb733cff18880fe412a5c32666fa187d7b2f92c090b13cb957eeda8
+Deleted: sha256:06f0c4757d2fb96eecfd5df0224138aba5fc8252ca7a708dbc10a729d450f4b5
+Deleted: sha256:1d08407755c0243da3cc5e43f0673151a5b2b9de69d2a2036b63aa94be148c6b
+Deleted: sha256:09b094432908a8fa361f38c2863929533e0819033757c14f015c31c5f620d9e5
+Deleted: sha256:eb5f13bce9936c760b9fa73aeb1b608787daa36106cc888104132e353ed37252
+ubuntu@ip-172-31-32-48:~$
+
+
+ubuntu@ip-172-31-32-48:~$ docker volume rm $(docker volume ls -q)
+myvol
+myvolume
+ubuntu@ip-172-31-32-48:~$ docker network rm mynetwork
+mynetwork
+ubuntu@ip-172-31-32-48:~$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+ubuntu@ip-172-31-32-48:~$ docker ls -lrt
+docker: unknown command: docker ls
+
+Run 'docker --help' for more information
+ubuntu@ip-172-31-32-48:~$ docker volume ls
+DRIVER    VOLUME NAME
+
+
+
+
+
+
